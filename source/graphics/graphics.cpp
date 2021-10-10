@@ -14,6 +14,7 @@ const wchar* k_window_class_name = L"DX12WindowClass";
 const wchar* k_window_name = L"Perfect Shot";
 const int32 k_window_width = 1280;
 const int32 k_window_height = 720;
+const float k_clear_color[] = { 0.2f, 0.4f, 0.8f, 1.0f };
 
 // ------- ------- ------- ------- ------- ------- -------
 // public definitions
@@ -29,10 +30,34 @@ void c_d3d_fence::initialize(
 void c_d3d_fence::destroy(
 	wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue)
 {
-	uint64 fence_value_for_signal = signal_fence(d3d_command_queue);
+	uint64 fence_value_for_signal = signal(d3d_command_queue);
 	wait_for_fence_value(fence_value_for_signal);
 
 	CloseHandle(m_fence_event);
+}
+
+uint64 c_d3d_fence::signal(
+	wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue)
+{
+	m_fence_value++;
+	uint64 fence_value_for_signal = m_fence_value;
+
+	throw_if_failed(d3d_command_queue->Signal(
+		m_d3d_fence.Get(),
+		fence_value_for_signal));
+
+	return fence_value_for_signal;
+}
+
+void c_d3d_fence::wait_for_fence_value(
+	uint64 fence_value)
+{
+	if (m_d3d_fence->GetCompletedValue() < fence_value)
+	{
+		throw_if_failed(m_d3d_fence->SetEventOnCompletion(fence_value, m_fence_event));
+
+		WaitForSingleObject(m_fence_event, INFINITE);
+	}
 }
 
 void c_d3d_globals::initialize(
@@ -85,6 +110,19 @@ void c_d3d_globals::destroy()
 	m_fence.destroy(m_d3d_command_queue);
 }
 
+void c_d3d_globals::render()
+{
+	wrl::ComPtr<ID3D12Resource> back_buffer = m_d3d_back_buffers[m_back_buffer_index];
+	wrl::ComPtr<ID3D12CommandAllocator> command_allocator = m_d3d_command_allocators[m_back_buffer_index];
+
+	command_allocator->Reset();
+	m_d3d_command_list->Reset(command_allocator.Get(), nullptr);
+
+	clear();
+
+	present();
+}
+
 // ------- ------- ------- ------- ------- ------- -------
 // private definitions
 
@@ -105,30 +143,6 @@ HANDLE c_d3d_fence::create_fence_event()
 	HANDLE fence_event = CreateEvent(nullptr, false, false, nullptr);
 	throw_if_failed(fence_event != nullptr);
 	return fence_event;
-}
-
-uint64 c_d3d_fence::signal_fence(
-	wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue)
-{
-	m_fence_value++;
-	uint64 fence_value_for_signal = m_fence_value;
-
-	throw_if_failed(d3d_command_queue->Signal(
-		m_d3d_fence.Get(),
-		fence_value_for_signal));
-
-	return fence_value_for_signal;
-}
-
-void c_d3d_fence::wait_for_fence_value(
-	uint64 fence_value)
-{
-	if (m_d3d_fence->GetCompletedValue() < fence_value)
-	{
-		throw_if_failed(m_d3d_fence->SetEventOnCompletion(fence_value, m_fence_event));
-
-		WaitForSingleObject(m_fence_event, INFINITE);
-	}
 }
 
 void c_d3d_globals::enable_debug_layer()
@@ -378,4 +392,55 @@ wrl::ComPtr<ID3D12GraphicsCommandList> c_d3d_globals::create_command_list(
 	throw_if_failed(d3d_command_list->Close());
 
 	return d3d_command_list;
+}
+
+void c_d3d_globals::clear()
+{
+	wrl::ComPtr<ID3D12Resource> back_buffer = m_d3d_back_buffers[m_back_buffer_index];
+
+	CD3DX12_RESOURCE_BARRIER d3dx_resource_barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		back_buffer.Get(),
+		D3D12_RESOURCE_STATE_PRESENT,
+		D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	m_d3d_command_list->ResourceBarrier(1, &d3dx_resource_barrier);
+
+	CD3DX12_CPU_DESCRIPTOR_HANDLE d3dx_cpu_descriptor_handle(
+		m_d3d_descriptor_heap->GetCPUDescriptorHandleForHeapStart(),
+		m_back_buffer_index,
+		m_descriptor_size);
+
+	m_d3d_command_list->ClearRenderTargetView(
+		d3dx_cpu_descriptor_handle,
+		k_clear_color,
+		0,
+		nullptr);
+}
+
+void c_d3d_globals::present()
+{
+	wrl::ComPtr<ID3D12Resource> back_buffer = m_d3d_back_buffers[m_back_buffer_index];
+
+	CD3DX12_RESOURCE_BARRIER d3dx_resource_barrier = CD3DX12_RESOURCE_BARRIER::Transition(
+		back_buffer.Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PRESENT);
+
+	m_d3d_command_list->ResourceBarrier(1, &d3dx_resource_barrier);
+
+	throw_if_failed(m_d3d_command_list->Close());
+
+	ID3D12CommandList* d3d_command_lists[] = { m_d3d_command_list.Get() };
+
+	m_d3d_command_queue->ExecuteCommandLists(
+		_countof(d3d_command_lists),
+		d3d_command_lists);
+
+	throw_if_failed(m_dxgi_swap_chain->Present(1, 0));
+
+	m_frame_fence_values[m_back_buffer_index] = m_fence.signal(m_d3d_command_queue);
+
+	m_back_buffer_index = m_dxgi_swap_chain->GetCurrentBackBufferIndex();
+
+	m_fence.wait_for_fence_value(m_frame_fence_values[m_back_buffer_index]);
 }

@@ -49,4 +49,6 @@ inline void throw_if(bool value)
 	}
 }
 
+#define ZERO_MEMORY(x) (memset(&x, 0, sizeof(x)))
+
 #endif // __PERFECT_SHOT_COMMON_H__

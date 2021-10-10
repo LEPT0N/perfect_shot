@@ -39,16 +39,16 @@ public:
 	void destroy(
 		wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue);
 
+	uint64 signal(
+		wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue);
+	void wait_for_fence_value(
+		uint64 fence_value);
+
 private:
 
 	static wrl::ComPtr<ID3D12Fence> create_fence(
 		wrl::ComPtr<ID3D12Device2> d3d_device);
 	static HANDLE create_fence_event();
-
-	uint64 signal_fence(
-		wrl::ComPtr<ID3D12CommandQueue> d3d_command_queue);
-	void wait_for_fence_value(
-		uint64 fence_value);
 
 	wrl::ComPtr<ID3D12Fence> m_d3d_fence;
 	HANDLE m_fence_event;
@@ -62,6 +62,7 @@ public:
 
 	c_d3d_globals()
 	{
+		ZERO_MEMORY(m_frame_fence_values);
 		m_back_buffer_index = 0;
 		m_descriptor_size = 0;
 		m_initialized = false;
@@ -73,6 +74,8 @@ public:
 	void destroy();
 
 	bool is_initialized() const { return m_initialized; };
+
+	void render();
 
 private:
 
@@ -109,6 +112,9 @@ private:
 		wrl::ComPtr<ID3D12CommandAllocator> d3d_command_allocator,
 		D3D12_COMMAND_LIST_TYPE d3d_command_list_type);
 
+	void clear();
+	void present();
+
 	wrl::ComPtr<ID3D12Device2> m_d3d_device;
 	wrl::ComPtr<ID3D12CommandQueue> m_d3d_command_queue;
 	wrl::ComPtr<IDXGISwapChain4> m_dxgi_swap_chain;
@@ -116,6 +122,8 @@ private:
 	wrl::ComPtr<ID3D12Resource> m_d3d_back_buffers[k_back_buffer_count];
 	wrl::ComPtr<ID3D12CommandAllocator> m_d3d_command_allocators[k_back_buffer_count];
 	wrl::ComPtr<ID3D12GraphicsCommandList> m_d3d_command_list;
+	
+	uint64 m_frame_fence_values[k_back_buffer_count];
 	c_d3d_fence m_fence;
 
 	uint32 m_back_buffer_index;

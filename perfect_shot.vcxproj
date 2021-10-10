@@ -21,10 +21,13 @@
   <ItemGroup>
     <ClInclude Include="source\common.h" />
     <ClInclude Include="source\graphics\graphics.h" />
+    <ClInclude Include="source\utilities\string_utilities.h" />
+    <ClInclude Include="source\utilities\time_utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\graphics\graphics.cpp" />
     <ClCompile Include="source\perfect_shot.cpp" />
+    <ClCompile Include="source\utilities\time_utilities.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -127,7 +130,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)\source;$(ProjectDir)\source\graphics;$(ProjectDir)\..\external\DirectX-Headers\include\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\source;$(ProjectDir)\source\graphics;$(ProjectDir)\source\utilities;$(ProjectDir)\..\external\DirectX-Headers\include\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -146,7 +149,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(ProjectDir)\source;$(ProjectDir)\source\graphics;$(ProjectDir)\..\external\DirectX-Headers\include\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\source;$(ProjectDir)\source\graphics;$(ProjectDir)\source\utilities;$(ProjectDir)\..\external\DirectX-Headers\include\directx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

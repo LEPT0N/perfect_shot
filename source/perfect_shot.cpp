@@ -9,7 +9,9 @@
 // headers
 
 #include "common.h"
+
 #include "graphics.h"
+#include "time_utilities.h"
 
 // ------- ------- ------- ------- ------- ------- -------
 // private declarations
@@ -20,10 +22,14 @@ LRESULT CALLBACK window_proc(
 	WPARAM wparam,
 	LPARAM lparam);
 
+void update();
+void render();
+
 // ------- ------- ------- ------- ------- ------- -------
 // data
 
 c_d3d_globals g_d3d_globals;
+c_frame_timer g_timer;
 
 // ------- ------- ------- ------- ------- ------- -------
 // private definitions
@@ -69,7 +75,8 @@ LRESULT CALLBACK window_proc(
 		{
 		case WM_PAINT:
 			handled = true;
-			// Render();
+			update();
+			render();
 			break;
 
 		case WM_SYSKEYDOWN:
@@ -94,4 +101,14 @@ LRESULT CALLBACK window_proc(
 	{
 		return DefWindowProc(window, message, wparam, lparam);
 	}
+}
+
+void update()
+{
+	g_timer.update();
+}
+
+void render()
+{
+	g_d3d_globals.render();
 }

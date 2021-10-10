@@ -4,17 +4,29 @@
     <Filter Include="graphics">
       <UniqueIdentifier>{d3e37866-f8dc-44f8-af7b-9576ce678c07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utilities">
+      <UniqueIdentifier>{ee8277e0-e540-44f7-9e16-7de95aa9addc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\common.h" />
     <ClInclude Include="source\graphics\graphics.h">
       <Filter>graphics</Filter>
     </ClInclude>
+    <ClInclude Include="source\utilities\time_utilities.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utilities\string_utilities.h">
+      <Filter>utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\perfect_shot.cpp" />
     <ClCompile Include="source\graphics\graphics.cpp">
       <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="source\utilities\time_utilities.cpp">
+      <Filter>utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
