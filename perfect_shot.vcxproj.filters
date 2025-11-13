@@ -7,6 +7,9 @@
     <Filter Include="utilities">
       <UniqueIdentifier>{ee8277e0-e540-44f7-9e16-7de95aa9addc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graphics\shaders">
+      <UniqueIdentifier>{7fa9a01f-10fa-4a7d-a271-71924e8702c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\common.h" />
@@ -19,6 +22,12 @@
     <ClInclude Include="source\utilities\string_utilities.h">
       <Filter>utilities</Filter>
     </ClInclude>
+    <ClInclude Include="source\graphics\command_queue.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\graphics_utilities.h">
+      <Filter>graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\perfect_shot.cpp" />
@@ -28,5 +37,19 @@
     <ClCompile Include="source\utilities\time_utilities.cpp">
       <Filter>utilities</Filter>
     </ClCompile>
+    <ClCompile Include="source\graphics\command_queue.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\graphics_utilities.cpp">
+      <Filter>graphics</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="source\graphics\shaders\vertex_shader.hlsl">
+      <Filter>graphics\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="source\graphics\shaders\pixel_shader.hlsl">
+      <Filter>graphics\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

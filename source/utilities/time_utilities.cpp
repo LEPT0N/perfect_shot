@@ -5,9 +5,9 @@
 // headers
 
 #include "common.h"
-#include "time_utilities.h"
+#include "utilities\time_utilities.h"
 
-#include "string_utilities.h"
+#include "utilities\string_utilities.h"
 
 // ------- ------- ------- ------- ------- ------- -------
 // public definitions

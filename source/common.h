@@ -10,8 +10,17 @@
 // headers
 
 #include <exception>
+#include <assert.h>
+#include <initguid.h>
+#include <d3d12.h>
+#include <d3dcompiler.h>
+#include <d3dx12.h>
+#include <dxgi1_6.h>
+#include <DirectXMath.h>
+#include <queue>
 #include <wrl.h>
 
+namespace dx = DirectX;
 namespace wrl = Microsoft::WRL;
 
 // ------- ------- ------- ------- ------- ------- -------
